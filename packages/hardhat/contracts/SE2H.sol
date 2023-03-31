@@ -173,7 +173,7 @@ contract SE2H is Ownable, ReentrancyGuard, ERC721 {
   }
 
   function publicMint() external payable mintNotReachSupply callerIsUser mintStart nonReentrant {
-    if (block.timestamp < mintStartTime) revert MintNotStart();
+    if (block.timestamp < mintEndTime) revert MintNotStart();
     if (msg.value != i_mintPrice) revert SendWrongMintPrice();
     if (balanceOf(msg.sender) >= 5) revert MoreThan5();
     tokenId = s_tokenIds.current();
