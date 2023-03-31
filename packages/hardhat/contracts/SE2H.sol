@@ -1,30 +1,30 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.7;
+pragma solidity >=0.8.0 <0.9.0;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/utils/cryptography/MerkleProof.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
-
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/IERC721Metadata.sol";
 
-contract TestNft is Ownable, ReentrancyGuard, ERC721 {
+contract SE2H is Ownable, ReentrancyGuard, ERC721 {
   ////////////////////////////////////////////
   ///////////  State variables  //////////////
   ////////////////////////////////////////////
-  bytes32 private _FreelistMerkleRoot;
-  bytes32 private _WhitelistMerkleRoot;
+  bytes32 private s_freelistMerkleRoot;
+  bytes32 private s_whitelistMerkleRoot;
+  uint256 private immutable i_maxSupply;
+  uint256 private immutable i_mintPrice;
+  address private s_metadataAddress;
 
-  uint256 public MAX_SUPPLY;
-  uint256 public MINT_COST;
   uint256 public tokenId;
   uint256 public mintStartTime;
+  uint256 public mintEndTime;
   bool public mintState;
-  address public metadataAddress;
 
   using Counters for Counters.Counter;
-  Counters.Counter private _tokenIds;
+  Counters.Counter private s_tokenIds;
 
   ////////////////////////////////////////////
   /////////////    Error   ///////////////////
@@ -32,22 +32,25 @@ contract TestNft is Ownable, ReentrancyGuard, ERC721 {
   error MerkleProofInvalid();
   error FreelistMintAlreadyClaimed();
   error WhitelistMintAlreadyClaimed();
-  error MintReachedSupply();
+  error ReachedMaxSupply();
   error CallerIsNotUser();
-  error SendWrongMintCost();
+  error SendWrongMintPrice();
   error TransferFaied();
-  error SetLater();
+  error TooEarly();
+  error WrongTimeSet();
   error MintNotStart();
   error InvalidAddress();
-  error TTTNotFound();
+  error NotFound();
   error MintIsOver();
+  error MoreThan5();
 
   ////////////////////////////////////////////
   /////////////    Event   ///////////////////
   ////////////////////////////////////////////
   event freelistMinted(address indexed minter, uint256 indexed tokenId);
   event whitelistMinted(address indexed minter, uint256 indexed tokenId);
-  event MetadataAddressUpdated(address metadataAddress);
+  event publcMinted(address indexed minter, uint256 indexed tokenId);
+  event metadataAddressUpdated(address s_metadataAddress);
 
   ////////////////////////////////////////////
   /////////////   Mapping   //////////////////
@@ -74,7 +77,7 @@ contract TestNft is Ownable, ReentrancyGuard, ERC721 {
   }
 
   modifier mintNotReachSupply() {
-    if (_tokenIds.current() > MAX_SUPPLY) revert MintReachedSupply();
+    if (s_tokenIds.current() > i_maxSupply) revert ReachedMaxSupply();
     _;
   }
 
@@ -84,16 +87,16 @@ contract TestNft is Ownable, ReentrancyGuard, ERC721 {
   }
 
   modifier mintStart() {
-    if (mintState) revert MintNotStart();
+    if (!mintState) revert MintNotStart();
     _;
   }
 
   ////////////////////////////////////////////
   //////////////  Constructor   //////////////
   ////////////////////////////////////////////
-  constructor(uint256 maxSupply, uint256 mintCost) ERC721("TEST NFT", "TTT") {
-    MAX_SUPPLY = maxSupply;
-    MINT_COST = mintCost;
+  constructor(uint256 maxSupply, uint256 mintCost) ERC721("Scaffold-Eth2-Hackathon-NFT", "SE2H") {
+    i_maxSupply = maxSupply;
+    i_mintPrice = mintCost;
   }
 
   ////////////////////////////////////////////
@@ -102,11 +105,11 @@ contract TestNft is Ownable, ReentrancyGuard, ERC721 {
 
   //setRoot
   function setFreelistMerkleRoot(bytes32 newRoot) external onlyOwner {
-    _FreelistMerkleRoot = newRoot;
+    s_freelistMerkleRoot = newRoot;
   }
 
   function setWhitelistMerkleRoot(bytes32 newRoot) external onlyOwner {
-    _WhitelistMerkleRoot = newRoot;
+    s_whitelistMerkleRoot = newRoot;
   }
 
   //setMintState
@@ -115,9 +118,12 @@ contract TestNft is Ownable, ReentrancyGuard, ERC721 {
   }
 
   //setMintTime
-  function setMintTime(uint256 mintTime) external onlyOwner {
-    if (mintTime <= block.timestamp) revert SetLater();
-    mintStartTime = mintTime;
+  function setMintTime(uint256 startTime, uint256 endTime) external onlyOwner {
+    if (startTime <= block.timestamp) revert TooEarly();
+    if (endTime <= block.timestamp) revert TooEarly();
+    if (startTime >= endTime) revert WrongTimeSet();
+    mintStartTime = startTime;
+    mintEndTime = endTime;
   }
 
   //Mint
@@ -126,22 +132,21 @@ contract TestNft is Ownable, ReentrancyGuard, ERC721 {
   )
     external
     payable
-    validMerkleProof(_FreelistMerkleRoot, _merkleProof)
+    validMerkleProof(s_freelistMerkleRoot, _merkleProof)
     freelistNotAlreadyClaimed
     mintNotReachSupply
     callerIsUser
     mintStart
     nonReentrant
   {
-    if (mintStartTime == 0) revert MintNotStart();
-    if (mintStartTime <= block.timestamp) revert MintIsOver();
+    if (block.timestamp < mintStartTime) revert MintNotStart();
+    if (block.timestamp > mintEndTime) revert MintIsOver();
     freelistClaimed[msg.sender] = true;
-    tokenId = _tokenIds.current();
+    tokenId = s_tokenIds.current();
     _safeMint(msg.sender, tokenId);
-
     emit freelistMinted(msg.sender, tokenId);
-    _tokenIds.increment();
-    tokenId = _tokenIds.current();
+    s_tokenIds.increment();
+    tokenId = s_tokenIds.current();
   }
 
   function whitelistMint(
@@ -149,36 +154,46 @@ contract TestNft is Ownable, ReentrancyGuard, ERC721 {
   )
     external
     payable
-    validMerkleProof(_WhitelistMerkleRoot, _merkleProof)
+    validMerkleProof(s_whitelistMerkleRoot, _merkleProof)
     whitelistNotAlreadyClaimed
     mintNotReachSupply
     callerIsUser
     mintStart
     nonReentrant
   {
-    if (mintStartTime == 0) revert MintNotStart();
-    if (mintStartTime <= block.timestamp) revert MintIsOver();
-    if (msg.value != MINT_COST) revert SendWrongMintCost();
+    if (block.timestamp < mintStartTime) revert MintNotStart();
+    if (block.timestamp > mintEndTime) revert MintIsOver();
+    if (msg.value != i_mintPrice / 2) revert SendWrongMintPrice();
     whitelistClaimed[msg.sender] = true;
-    tokenId = _tokenIds.current();
+    tokenId = s_tokenIds.current();
     _safeMint(msg.sender, tokenId);
-
     emit whitelistMinted(msg.sender, tokenId);
-    _tokenIds.increment();
-    tokenId = _tokenIds.current();
+    s_tokenIds.increment();
+    tokenId = s_tokenIds.current();
+  }
+
+  function publicMint() external payable mintNotReachSupply callerIsUser mintStart nonReentrant {
+    if (block.timestamp < mintStartTime) revert MintNotStart();
+    if (msg.value != i_mintPrice) revert SendWrongMintPrice();
+    if (balanceOf(msg.sender) >= 5) revert MoreThan5();
+    tokenId = s_tokenIds.current();
+    _safeMint(msg.sender, tokenId);
+    emit publcMinted(msg.sender, tokenId);
+    s_tokenIds.increment();
+    tokenId = s_tokenIds.current();
   }
 
   //setTokenMetadata
   function setMetadataAddress(address addr) external onlyOwner {
     if (addr == address(0)) revert InvalidAddress();
-    metadataAddress = addr;
-    emit MetadataAddressUpdated(addr);
+    s_metadataAddress = addr;
+    emit metadataAddressUpdated(addr);
   }
 
   //tokenURI
   function tokenURI(uint256 tId) public view override returns (string memory) {
-    if (!_exists(tId)) revert TTTNotFound();
-    return IERC721Metadata(metadataAddress).tokenURI(tId);
+    if (!_exists(tId)) revert NotFound();
+    return IERC721Metadata(s_metadataAddress).tokenURI(tId);
   }
 
   //Withdraw

@@ -2,12 +2,12 @@ import { HardhatRuntimeEnvironment } from "hardhat/types";
 import { DeployFunction } from "hardhat-deploy/types";
 
 /**
- * Deploys a contract named "TestNft" using the deployer account and
+ * Deploys a contract named "SE2H" using the deployer account and
  * constructor arguments set to the deployer address
  *
  * @param hre HardhatRuntimeEnvironment object.
  */
-const deployTestNft: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
+const deploySE2H: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   /*
     On localhost, the deployer account is the one that comes with Hardhat, which is already funded.
 
@@ -21,10 +21,10 @@ const deployTestNft: DeployFunction = async function (hre: HardhatRuntimeEnviron
   const { deployer } = await hre.getNamedAccounts();
   const { deploy } = hre.deployments;
 
-  await deploy("TestNft", {
+  await deploy("SE2H", {
     from: deployer,
     // Contract constructor arguments
-    args: ["10000", "100000000000000000"],
+    args: ["2222", "100000000000000000"],
     log: true,
     // autoMine: can be passed to the deploy function to make the deployment process faster on local networks by
     // automatically mining the contract deployment transaction. There is no effect on live networks.
@@ -32,11 +32,11 @@ const deployTestNft: DeployFunction = async function (hre: HardhatRuntimeEnviron
   });
 
   // Get the deployed contract
-  // const TestNft = await hre.ethers.getContract("TestNft", deployer);
+  // const SE2H = await hre.ethers.getContract("SE2H", deployer);
 };
 
-export default deployTestNft;
+export default deploySE2H;
 
 // Tags are useful if you have multiple deploy files and only want to run one of them.
-// e.g. yarn deploy --tags TestNft
-deployTestNft.tags = ["TestNft"];
+// e.g. yarn deploy --tags SE2H
+deploySE2H.tags = ["SE2H"];
