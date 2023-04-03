@@ -1,4 +1,5 @@
 node_modules
+.history
 
 # dependencies, yarn, etc
 # yarn / eslint
