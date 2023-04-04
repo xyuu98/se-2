@@ -1,9 +1,56 @@
+import { useEffect, useState } from "react";
 import Head from "next/head";
-import Link from "next/link";
+import Image from "next/image";
+import CountDown from "../components/CountDown";
+import abi from "../generated/contarc.json";
+import pic from "./pic.png";
+import { ethers } from "ethers";
 import type { NextPage } from "next";
-import { BugAntIcon, SparklesIcon } from "@heroicons/react/24/outline";
+import { localhost } from "wagmi/chains";
+import { getLocalProvider } from "~~/utils/scaffold-eth";
+
+const contractAddress = "0x5FbDB2315678afecb367f032d93F642f64180aa3";
+const provider = getLocalProvider(localhost);
 
 const Home: NextPage = () => {
+  const [startTime, setstartTime] = useState<number>(0);
+  const [endTime, setendTime] = useState<number>(0);
+  const [nowTime, setnowTime] = useState<number>(0);
+  const [maxSupply, setmaxSupply] = useState<number>(0);
+  const [tokenId, settokenId] = useState<number>(0);
+  const [notRevealedUri, setnotRevealedUri] = useState<string>("");
+
+  const getfinish = () => {
+    console.log("倒计时结束");
+  };
+
+  useEffect(() => {
+    const contract = new ethers.Contract(contractAddress, abi, provider);
+    console.log(contract);
+
+    contract.mintEndTime().then((data: number) => {
+      const endtime = parseInt(String(data), 10);
+      setendTime(endtime);
+    });
+    contract.mintStartTime().then((data: number) => {
+      const starttime = parseInt(String(data), 10);
+      setstartTime(starttime);
+    });
+    contract.i_maxSupply().then((data: number) => {
+      const _maxSupply = parseInt(String(data), 10);
+      setmaxSupply(_maxSupply);
+    });
+    contract.tokenId().then((data: number) => {
+      const _tokenId = parseInt(String(data), 10);
+      settokenId(_tokenId);
+    });
+    contract.notRevealedUri().then((data: string) => {
+      setnotRevealedUri(data);
+    });
+
+    setnowTime(new Date().getTime());
+  }, [provider]);
+
   return (
     <>
       <Head>
@@ -11,43 +58,76 @@ const Home: NextPage = () => {
         <meta name="description" content="Created with 🏗 scaffold-eth" />
       </Head>
 
-      <div className="flex items-center flex-col flex-grow pt-10">
-        <div className="px-5">
-          <h1 className="text-center mb-8">
-            <span className="block text-2xl mb-2">Welcome to</span>
-            <span className="block text-4xl font-bold">scaffold-eth 2</span>
-          </h1>
-          <p className="text-center text-lg">
-            Get started by editing{" "}
-            <code className="italic bg-base-300 text-base font-bold">packages/nextjs/pages/index.tsx</code>
-          </p>
-          <p className="text-center text-lg">
-            Edit your smart contract <code className="italic bg-base-300 text-base font-bold">YourContract.sol</code> in{" "}
-            <code className="italic bg-base-300 text-base font-bold">packages/hardhat/contracts</code>
-          </p>
-        </div>
+      {/* changed */}
+      <div className="h-screen bg-base-300">
+        {/*  py-12 */}
+        <div className="bg-base-300 w-full px-8 mt-8"></div>
 
-        <div className="flex-grow bg-base-300 w-full mt-16 px-8 py-12">
-          <div className="flex justify-center items-center gap-12 flex-col sm:flex-row">
-            <div className="flex flex-col bg-base-100 px-10 py-10 text-center items-center max-w-xs rounded-3xl">
-              <BugAntIcon className="h-8 w-8 fill-secondary" />
-              <p>
-                Tinker with your smart contract using the{" "}
-                <Link href="/debug" passHref className="link">
-                  Debug Contract
-                </Link>{" "}
-                tab.
-              </p>
+        <div className="w-11/12 border border-black mx-auto relative font-sans" style={{ height: "600px" }}>
+          {/* circle */}
+          <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2">
+            <div>SUPPLY</div>
+            <div className="rounded-full h-24 w-24 flex items-center justify-center border border-black">
+              {tokenId}/{maxSupply}
             </div>
-            <div className="flex flex-col bg-base-100 px-10 py-10 text-center items-center max-w-xs rounded-3xl">
-              <SparklesIcon className="h-8 w-8 fill-secondary" />
-              <p>
-                Experiment with{" "}
-                <Link href="/example-ui" passHref className="link">
-                  Example UI
-                </Link>{" "}
-                to build your own UI.
-              </p>
+          </div>
+          {/* 1 */}
+          <div className="w-4/5 h-full absolute left-0 top-0 z-10 flex flex-col ">
+            <div>
+              <div>
+                <span className="font-bold">FREELIST</span>
+                <span>closed</span>
+              </div>
+              <div>
+                End in 10h &nbsp;
+                {startTime !== 0 && startTime > nowTime ? (
+                  "Pending"
+                ) : endTime > nowTime ? (
+                  <CountDown max={endTime - nowTime} finish={getfinish} />
+                ) : (
+                  "Closed"
+                )}
+              </div>
+              <Image src={pic} alt={notRevealedUri} width={200} priority />
+              <div className="btn btn-primary btn-sm rounded-full font-normal normal-case w-20 relative z-10">FREE</div>
+            </div>
+          </div>
+          {/* 2 */}
+          <div className="w-1/2 h-full absolute right-0 top-0 flex flex-col" style={{ alignItems: "flex-end" }}>
+            <div>
+              <div>
+                <span className="font-bold">WHITELIST</span>
+                <span>Opening</span>
+              </div>
+              <div>
+                End in 10h&nbsp;
+                {startTime !== 0 && startTime > nowTime ? (
+                  "Pending"
+                ) : endTime > nowTime ? (
+                  <CountDown max={endTime - nowTime} finish={getfinish} />
+                ) : (
+                  "Closed"
+                )}
+              </div>
+              <Image src={pic} alt={notRevealedUri} width={200} priority />
+              <div className="btn btn-primary btn-sm rounded-full font-normal normal-case w-20 relative z-10">FREE</div>
+            </div>
+          </div>
+          {/* 3 */}
+          <div
+            className="w-full h-1/2 absolute bottom-0 flex flex-row justify-center"
+            style={{ alignItems: "flex-end" }}
+          >
+            <div className="flex flex-row">
+              <div>
+                <div>
+                  <span className="font-bold">Public</span>
+                  <span>Opening</span>
+                </div>
+                <div>End in 10h</div>
+              </div>
+              <Image src={pic} alt={notRevealedUri} width={200} priority />
+              <div className="btn btn-primary btn-sm rounded-full font-normal normal-case w-20 relative z-10">FREE</div>
             </div>
           </div>
         </div>
