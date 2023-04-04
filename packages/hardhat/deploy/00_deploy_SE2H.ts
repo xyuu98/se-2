@@ -1,5 +1,5 @@
-import { HardhatRuntimeEnvironment } from "hardhat/types";
-import { DeployFunction } from "hardhat-deploy/types";
+import { HardhatRuntimeEnvironment } from "hardhat/types"
+import { DeployFunction } from "hardhat-deploy/types"
 
 /**
  * Deploys a contract named "SE2H" using the deployer account and
@@ -7,8 +7,10 @@ import { DeployFunction } from "hardhat-deploy/types";
  *
  * @param hre HardhatRuntimeEnvironment object.
  */
-const deploySE2H: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
-  /*
+const deploySE2H: DeployFunction = async function (
+    hre: HardhatRuntimeEnvironment
+) {
+    /*
     On localhost, the deployer account is the one that comes with Hardhat, which is already funded.
 
     When deploying to live networks (e.g `yarn deploy --network goerli`), the deployer account
@@ -18,25 +20,29 @@ const deploySE2H: DeployFunction = async function (hre: HardhatRuntimeEnvironmen
     with a random private key in the .env file (then used on hardhat.config.ts)
     You can run the `yarn account` command to check your balance in every network.
   */
-  const { deployer } = await hre.getNamedAccounts();
-  const { deploy } = hre.deployments;
+    const { deployer } = await hre.getNamedAccounts()
+    const { deploy } = hre.deployments
 
-  await deploy("SE2H", {
-    from: deployer,
-    // Contract constructor arguments
-    args: ["2222", "100000000000000000"],
-    log: true,
-    // autoMine: can be passed to the deploy function to make the deployment process faster on local networks by
-    // automatically mining the contract deployment transaction. There is no effect on live networks.
-    autoMine: true,
-  });
+    await deploy("SE2H", {
+        from: deployer,
+        // Contract constructor arguments
+        args: ["2222", "100000000000000000"],
+        log: true,
+        // autoMine: can be passed to the deploy function to make the deployment process faster on local networks by
+        // automatically mining the contract deployment transaction. There is no effect on live networks.
+        autoMine: true,
+    })
 
-  // Get the deployed contract
-  // const SE2H = await hre.ethers.getContract("SE2H", deployer);
-};
+    // Get the deployed contract
+    const SE2H = await hre.ethers.getContract("SE2H", deployer)
+    //Set uri
+    await SE2H.setNotRevealedURI(
+        "ipfs://QmRUAsEcEJZRYn8pjmyAgsDU5EYu2eAofYdX3qC9fo8yGd"
+    )
+}
 
-export default deploySE2H;
+export default deploySE2H
 
 // Tags are useful if you have multiple deploy files and only want to run one of them.
 // e.g. yarn deploy --tags SE2H
-deploySE2H.tags = ["SE2H"];
+deploySE2H.tags = ["SE2H"]
