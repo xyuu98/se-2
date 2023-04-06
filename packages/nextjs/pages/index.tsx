@@ -4,6 +4,7 @@ import Image from "next/image";
 import { getFreelistProof } from "../../hardhat/scripts/getRoot";
 import CountDown from "../components/CountDown";
 import abi from "../contract/abi.json";
+// import { useScaffoldContractWrite } from "../hooks/scaffold-eth/useScaffoldContractWrite";
 import dog from "./dog.jpg";
 import pic from "./pic.png";
 import { ethers } from "ethers";
@@ -15,6 +16,12 @@ import { getLocalProvider } from "~~/utils/scaffold-eth";
 const contractAddress = "0x5FbDB2315678afecb367f032d93F642f64180aa3";
 const provider = getLocalProvider(localhost);
 const contract = new ethers.Contract(contractAddress, abi, provider);
+let signer;
+let contractWithSigner: any;
+if (provider) {
+  signer = provider.getSigner();
+  contractWithSigner = contract.connect(signer);
+}
 console.log(contract);
 
 const Home: NextPage = () => {
@@ -28,13 +35,16 @@ const Home: NextPage = () => {
   const { address } = useAccount();
 
   const getfinish = () => {
-    console.log("mint结束");
+    console.log("finish");
   };
 
   const freeMint = () => {
-    const freeproof = getFreelistProof(address);
-    console.log(freeproof);
-    contract.freelistMint(freeproof).then((data: any) => {
+    const freeproof = getFreelistProof(address)[0];
+    const _freeproof = `["${freeproof}"]`;
+    const _args = JSON.parse(_freeproof);
+    console.log(_args);
+
+    contractWithSigner.freelistMint(_args).then((data: any) => {
       console.log(data);
     });
   };
@@ -64,7 +74,7 @@ const Home: NextPage = () => {
     });
 
     setnowTime(new Date().getTime());
-  }, [provider]);
+  }, []);
 
   return (
     <>
