@@ -3,7 +3,7 @@ import Head from "next/head";
 import Image from "next/image";
 import { getFreelistProof } from "../../hardhat/scripts/getRoot";
 import CountDown from "../components/CountDown";
-import abi from "../generated/contarc.json";
+import abi from "../contract/abi.json";
 import dog from "./dog.jpg";
 import pic from "./pic.png";
 import { ethers } from "ethers";
