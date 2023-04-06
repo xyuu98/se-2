@@ -1,5 +1,6 @@
 import { HardhatRuntimeEnvironment } from "hardhat/types"
 import { DeployFunction } from "hardhat-deploy/types"
+import { time } from "@nomicfoundation/hardhat-network-helpers"
 
 /**
  * Deploys a contract named "SE2H" using the deployer account and
@@ -39,6 +40,14 @@ const deploySE2H: DeployFunction = async function (
     await SE2H.setNotRevealedURI(
         "ipfs://QmRUAsEcEJZRYn8pjmyAgsDU5EYu2eAofYdX3qC9fo8yGd"
     )
+    await SE2H.setFreelistMerkleRoot(
+        "0x8527c842a3751c5a160fea7402d1ee111e8b615882f52cfe2235093f30d4d8d2"
+    )
+    await SE2H.setWhitelistMerkleRoot(
+        "0x41f8b0811f71cfa28beff1bda2fc1644f0568541fcf57da5006c818c3ac7b6d9"
+    )
+    await SE2H.setMintTime(time.latest(), time.increase(3600))
+    await SE2H.setMintState()
 }
 
 export default deploySE2H
