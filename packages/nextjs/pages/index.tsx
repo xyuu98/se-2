@@ -54,16 +54,17 @@ const Home: NextPage = () => {
   const freeMint = () => {
     const freeproof = getFreelistProof(address);
     set_args(freeproof);
-    console.log(_args, freeproof);
-    console.log(1, freelistMint());
+    console.log("_args", _args);
+    _args && freelistMint();
   };
   const PublicMint = () => {
     console.log(2, writePublic());
   };
 
   useEffect(() => {
-    console.log("start home");
-  }, []);
+    startTime &&
+      console.log("start:", new Date(Number(startTime) * 1000), "\n", "end:", new Date(Number(endTime) * 1000));
+  }, [startTime, endTime]);
 
   return (
     <>
@@ -89,9 +90,9 @@ const Home: NextPage = () => {
               <span>{}</span>
             </div>
             <div className="flex flex-row justify-center">
-              {Number(startTime) !== 0 && Number(startTime) <= nowTime && Number(endTime) > nowTime ? (
+              {Number(startTime) !== 0 && Number(startTime) * 1000 <= nowTime && Number(endTime) * 1000 > nowTime ? (
                 <div style={{ color: "#ffbf70" }}>
-                  End in <CountDown max={Number(endTime) - nowTime} finish={getfinish} />
+                  End in <CountDown max={Number(endTime) * 1000 - nowTime} finish={getfinish} />
                 </div>
               ) : null}
             </div>
@@ -110,11 +111,11 @@ const Home: NextPage = () => {
               <span></span>
             </div>
             <div>
-              {Number(startTime) !== 0 && Number(startTime) > nowTime ? (
+              {Number(startTime) * 1000 !== 0 && Number(startTime) * 1000 > nowTime ? (
                 "Pending"
-              ) : Number(endTime) > nowTime ? (
+              ) : Number(endTime) * 1000 > nowTime ? (
                 <div>
-                  End in <CountDown max={Number(endTime) - nowTime} finish={getfinish} />
+                  End in <CountDown max={Number(endTime) * 1000 - nowTime} finish={getfinish} />
                 </div>
               ) : (
                 "Closed"
