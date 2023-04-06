@@ -45,4 +45,4 @@ export default deploySE2H
 
 // Tags are useful if you have multiple deploy files and only want to run one of them.
 // e.g. yarn deploy --tags SE2H
-deploySE2H.tags = ["SE2H"]
+deploySE2H.tags = ["all", "SE2H"]
