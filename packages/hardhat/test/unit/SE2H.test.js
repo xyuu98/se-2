@@ -84,7 +84,7 @@ describe("SE2H", function () {
 
     describe("Freelist mint", () => {
         it("It will get MintIsOver() if end time is after block time", async () => {
-            await SE2H.setMintTime((await timestamp) - 2, (await timestamp) - 1)
+            await SE2H.setMintTime()
             await expect(
                 SE2H.freelistMint([
                     "0x975f9edd1da8a193f4281170fb2cb66be905a61001f063759188081df2ffb006",
@@ -92,7 +92,7 @@ describe("SE2H", function () {
             ).to.be.reverted
         })
         it("It will get MintNotStart() if start time is before block time", async () => {
-            await SE2H.setMintTime((await timestamp) + 1, (await timestamp) + 2)
+            await SE2H.setMintTime()
             await expect(
                 SE2H.freelistMint([
                     "0x975f9edd1da8a193f4281170fb2cb66be905a61001f063759188081df2ffb006",
