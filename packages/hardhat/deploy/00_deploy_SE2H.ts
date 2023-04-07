@@ -1,6 +1,6 @@
 import { HardhatRuntimeEnvironment } from "hardhat/types"
 import { DeployFunction } from "hardhat-deploy/types"
-import { time } from "@nomicfoundation/hardhat-network-helpers"
+// import { time } from "@nomicfoundation/hardhat-network-helpers"
 
 /**
  * Deploys a contract named "SE2H" using the deployer account and
@@ -32,6 +32,7 @@ const deploySE2H: DeployFunction = async function (
         // autoMine: can be passed to the deploy function to make the deployment process faster on local networks by
         // automatically mining the contract deployment transaction. There is no effect on live networks.
         autoMine: true,
+        waitConfirmations: 1,
     })
 
     // Get the deployed contract
@@ -46,8 +47,8 @@ const deploySE2H: DeployFunction = async function (
     await SE2H.setWhitelistMerkleRoot(
         "0x41f8b0811f71cfa28beff1bda2fc1644f0568541fcf57da5006c818c3ac7b6d9"
     )
-    await SE2H.setMintTime(time.latest(), time.increase(3600))
-    await SE2H.setMintState()
+    // await SE2H.setMintTime(time.latest(), time.increase(3600))
+    // await SE2H.setMintState()
 }
 
 export default deploySE2H
