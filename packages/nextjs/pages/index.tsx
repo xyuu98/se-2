@@ -7,14 +7,16 @@ import { useScaffoldContractRead } from "../hooks/scaffold-eth/useScaffoldContra
 import { useScaffoldContractWrite } from "../hooks/scaffold-eth/useScaffoldContractWrite";
 import dog from "./dog.jpg";
 import pic from "./pic.png";
+import dayjs from "dayjs";
 import type { NextPage } from "next";
 import { useAccount } from "wagmi";
-import { ContractData } from "~~/components/example-ui/ContractData";
+import { SquareUi } from "~~/components/example-ui/squareUi";
 
 const Home: NextPage = () => {
   const { address } = useAccount();
+  const [now, setNow] = useState("");
+  const [nowStamp, setNowStamp] = useState(0);
 
-  const nowTime = new Date().getTime();
   const { data: startTime } = useScaffoldContractRead({
     contractName: "SE2H",
     functionName: "getMintStartTime",
@@ -22,6 +24,10 @@ const Home: NextPage = () => {
   const { data: endTime } = useScaffoldContractRead({
     contractName: "SE2H",
     functionName: "getMintEndTime",
+  });
+  const { data: mintState } = useScaffoldContractRead({
+    contractName: "SE2H",
+    functionName: "getMintState",
   });
   const { data: baseURI } = useScaffoldContractRead({
     contractName: "SE2H",
@@ -48,24 +54,24 @@ const Home: NextPage = () => {
     args: _args,
   });
 
-  const getfinish = () => {
-    console.log("finish");
+  const formatTime = () => {
+    const time = new Date().getTime();
+    const _time = dayjs(time).format("YYYY-MM-DD HH-mm-ss");
+    setNow(_time);
+    setNowStamp(time);
   };
 
-  const freeMint = () => {
-    const freeproof = getFreelistProof(address);
-    set_args(freeproof);
-    console.log("_args", _args);
-    _args && freelistMint();
-  };
-  const PublicMint = () => {
-    console.log(2, writePublic());
-  };
-
+  // 定义定时器
   useEffect(() => {
-    startTime &&
-      console.log("start:", new Date(Number(startTime) * 1000), "\n", "end:", new Date(Number(endTime) * 1000));
-  }, [startTime, endTime]);
+    const timeoutID = setInterval(() => {
+      formatTime();
+    }, 1000);
+
+    return () => {
+      // 退出清理定时器
+      clearTimeout(timeoutID);
+    };
+  }, []);
 
   return (
     <>
@@ -75,80 +81,37 @@ const Home: NextPage = () => {
       </Head>
 
       {/* changed */}
-      <div className="h-screen bg-base-300">
-        <div className="bg-base-300 w-full px-8 mt-8">
-          <ContractData />
+      <div className="h-screen bg-base-300 flex flex-row">
+        <div className="w-1/3 pl-5">
+          <div className="mt-3">
+            <strong>Total supply:</strong> <br />
+            {Number(maxSupply)}
+          </div>
+          <div className="mt-3">
+            <strong> Already supply:</strong> <br />
+            {Number(tokenId)}
+          </div>
+          <div className="mt-3">
+            <strong>Status:</strong> <br />
+            {mintState ? "true" : "false"}
+          </div>
+
+          <div className="mt-3">
+            <strong>Now time:</strong> <br />
+            {now} <br />
+            {nowStamp}
+          </div>
+          <div className="mt-3">
+            <strong>Start time:</strong> <br />
+            {dayjs(Number(startTime)).format("YYYY-MM-DD HH:mm")}
+          </div>
+          <div className="mt-3">
+            <strong> End time: </strong> <br />
+            {dayjs(Number(endTime)).format("YYYY-MM-DD HH:mm")}
+          </div>
         </div>
-        <div className="w-11/12 border border-black mx-auto relative font-sans" style={{ height: "600px" }}>
-          <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 z-20">
-            <div className="text-center font-bold ">SUPPLY</div>
-            <div className="rounded-full h-24 w-24 flex items-center justify-center border border-4 border-violet-800">
-              {Number(tokenId)}/{Number(maxSupply)}
-            </div>
-          </div>
-          {/* 1 */}
-          <div className="w-1/3 h-full absolute left-0 top-0 z-10 flex flex-col items-center border mt-4">
-            <div className="flex flex-row justify-center">
-              <span className="font-bold">FREELIST</span>
-              <span>{}</span>
-            </div>
-            <div className="flex flex-row justify-center">
-              {Number(startTime) !== 0 && Number(startTime) * 1000 <= nowTime && Number(endTime) * 1000 > nowTime ? (
-                <div style={{ color: "#ffbf70" }}>
-                  End in <CountDown max={Number(endTime) * 1000 - nowTime} finish={getfinish} />
-                </div>
-              ) : null}
-            </div>
-            <Image src={baseURI ? dog : pic} alt="" width={200} priority className="border border-2 border-black" />
-            <div
-              className="btn btn-primary btn-sm rounded-full font-normal normal-case w-20 relative z-10 mt-4"
-              onClick={freeMint}
-            >
-              FreeMint
-            </div>
-          </div>
-          {/* 2 */}
-          <div className="w-1/2 h-full absolute right-0 top-0 flex flex-col" style={{ alignItems: "flex-end" }}>
-            <div>
-              <span className="font-bold">WHITELIST</span>
-              <span></span>
-            </div>
-            <div>
-              {Number(startTime) * 1000 !== 0 && Number(startTime) * 1000 > nowTime ? (
-                "Pending"
-              ) : Number(endTime) * 1000 > nowTime ? (
-                <div>
-                  End in <CountDown max={Number(endTime) * 1000 - nowTime} finish={getfinish} />
-                </div>
-              ) : (
-                "Closed"
-              )}
-            </div>
-            <Image src={baseURI ? dog : pic} alt="" width={200} priority />
-            <div className="btn btn-primary btn-sm rounded-full font-normal normal-case w-20 relative z-10">FREE</div>
-          </div>
-          {/* 3 */}
-          <div
-            className="w-full h-1/2 absolute bottom-0 flex flex-row justify-center"
-            style={{ alignItems: "flex-end" }}
-          >
-            <div className="flex flex-row">
-              <div>
-                <div>
-                  <span className="font-bold">Public</span>
-                  <span></span>
-                </div>
-                <div></div>
-              </div>
-              <Image src={baseURI ? dog : pic} alt="" width={200} priority />
-              <div
-                className="btn btn-primary btn-sm rounded-full font-normal normal-case w-20 relative z-10"
-                onClick={PublicMint}
-              >
-                PublicMint
-              </div>
-            </div>
-          </div>
+        <div className="grow pr-4">
+          <SquareUi />
         </div>
       </div>
     </>

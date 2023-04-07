@@ -46,9 +46,11 @@ const deploySE2H: DeployFunction = async function (
     await SE2H.setWhitelistMerkleRoot(
         "0x41f8b0811f71cfa28beff1bda2fc1644f0568541fcf57da5006c818c3ac7b6d9"
     )
-    await SE2H.setMintTime(time.latest(), time.increase(3600))
-    await SE2H.setMintState()
+    // await SE2H.setMintTime(time.latest(), time.increase(3600))
+    // await SE2H.setMintState()
 }
+
+// ["0x00314e565e0574cb412563df634608d76f5c59d9f817e85966100ec1d48005c0","0x975f9edd1da8a193f4281170fb2cb66be905a61001f063759188081df2ffb006","0x1d2c6d0de38c77d2a15f6d241121ec032404625e87566d8a742d3dc2f924263d"]
 
 export default deploySE2H
 
