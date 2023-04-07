@@ -9,6 +9,7 @@ import dog from "./dog.jpg";
 import pic from "./pic.png";
 import type { NextPage } from "next";
 import { useAccount } from "wagmi";
+import { ContractData } from "~~/components/example-ui/ContractData";
 
 const Home: NextPage = () => {
   const { address } = useAccount();
@@ -75,7 +76,9 @@ const Home: NextPage = () => {
 
       {/* changed */}
       <div className="h-screen bg-base-300">
-        <div className="bg-base-300 w-full px-8 mt-8"></div>
+        <div className="bg-base-300 w-full px-8 mt-8">
+          <ContractData />
+        </div>
         <div className="w-11/12 border border-black mx-auto relative font-sans" style={{ height: "600px" }}>
           <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 z-20">
             <div className="text-center font-bold ">SUPPLY</div>
