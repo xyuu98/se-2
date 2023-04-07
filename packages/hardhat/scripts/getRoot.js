@@ -64,7 +64,7 @@ console.log(`Freelist Root: ${getFreelistRootHash()}`)
 
 console.log(
     `Freelist Proof: ${getFreelistProof(
-        "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"
+        "0x3D64FB07e24a6543c3A5B9c08a55122910f67655"
     )}`
 )
 
@@ -74,7 +74,15 @@ module.exports = {
     getWhitelistProof,
     getFreelistProof,
 }
-
-0x00314e565e0574cb412563df634608d76f5c59d9f817e85966100ec1d48005c0,
-    0x975f9edd1da8a193f4281170fb2cb66be905a61001f063759188081df2ffb006,
-    0x1d2c6d0de38c77d2a15f6d241121ec032404625e87566d8a742d3dc2f924263d
+//2266 proof
+// [
+//     "0x00314e565e0574cb412563df634608d76f5c59d9f817e85966100ec1d48005c0",
+//     "0x975f9edd1da8a193f4281170fb2cb66be905a61001f063759188081df2ffb006",
+//     "0x1d2c6d0de38c77d2a15f6d241121ec032404625e87566d8a742d3dc2f924263d"
+// ]
+//7655 proof
+// [
+//     ("0x860bc27ea934bb0a1c244679b198185ee171b6a2c2a1fe88659b9d6254904e78",
+//     "0x070e8db97b197cc0e4a1790c5e6c3667bab32d733db7f815fbe84f5824c7168d",
+//     "0x1d2c6d0de38c77d2a15f6d241121ec032404625e87566d8a742d3dc2f924263d")
+// ]
