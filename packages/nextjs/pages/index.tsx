@@ -1,12 +1,6 @@
 import { useEffect, useState } from "react";
 import Head from "next/head";
-import Image from "next/image";
-import { getFreelistProof } from "../../hardhat/scripts/getRoot";
-import CountDown from "../components/CountDown";
 import { useScaffoldContractRead } from "../hooks/scaffold-eth/useScaffoldContractRead";
-import { useScaffoldContractWrite } from "../hooks/scaffold-eth/useScaffoldContractWrite";
-import dog from "./dog.jpg";
-import pic from "./pic.png";
 import dayjs from "dayjs";
 import type { NextPage } from "next";
 import { SquareUi } from "~~/components/example-ui/squareUi";
@@ -27,10 +21,6 @@ const Home: NextPage = () => {
     contractName: "SE2H",
     functionName: "getMintState",
   });
-  const { data: baseURI } = useScaffoldContractRead({
-    contractName: "SE2H",
-    functionName: "getBaseUri",
-  });
   const { data: tokenId } = useScaffoldContractRead({
     contractName: "SE2H",
     functionName: "getTokenId",
@@ -38,18 +28,6 @@ const Home: NextPage = () => {
   const { data: maxSupply } = useScaffoldContractRead({
     contractName: "SE2H",
     functionName: "getMaxSupply",
-  });
-  const { writeAsync: writePublic } = useScaffoldContractWrite({
-    contractName: "SE2H",
-    functionName: "publicMint",
-    value: "0.1",
-  });
-
-  const [_args, set_args] = useState<any>();
-  const { writeAsync: freelistMint } = useScaffoldContractWrite({
-    contractName: "SE2H",
-    functionName: "freelistMint",
-    args: _args,
   });
 
   const formatTime = () => {
@@ -59,14 +37,12 @@ const Home: NextPage = () => {
     setNowStamp(time);
   };
 
-  // 定义定时器
   useEffect(() => {
     const timeoutID = setInterval(() => {
       formatTime();
     }, 1000);
 
     return () => {
-      // 退出清理定时器
       clearTimeout(timeoutID);
     };
   }, []);
@@ -86,7 +62,7 @@ const Home: NextPage = () => {
             {Number(maxSupply)}
           </div>
           <div className="mt-3">
-            <strong> Already supply:</strong> <br />
+            <strong> Already mint:</strong> <br />
             {Number(tokenId)}
           </div>
           <div className="mt-3">
