@@ -4,6 +4,7 @@ import { getFreelistProof, getWhitelistProof } from "../../../hardhat/scripts/ge
 import nullPic from "../../pages/null.jpg";
 import pic from "../../pages/pic.png";
 import { notification } from "../../utils/scaffold-eth/notification";
+import { ethers } from "ethers";
 import { useAccount } from "wagmi";
 import { useScaffoldContractRead, useScaffoldContractWrite } from "~~/hooks/scaffold-eth";
 
@@ -113,8 +114,9 @@ export const SquareUi = () => {
       return;
     }
     const proof = getFreelistProof(address);
-    set_args(proof);
-    console.log("free", _args);
+    const params = [`${proof[0]}`, `${proof[1]}`, `${proof[2]}`];
+    console.log(params);
+    set_args(params);
     _args && freelistMint();
   };
 
@@ -238,7 +240,7 @@ export const SquareUi = () => {
               {new Array(1).fill("").map((_, i) => {
                 return (
                   <div className="flex justify-center" key={i}>
-                    <Image src={Number(balanceof) > 1 ? pic : nullPic} alt="" width={200} priority />
+                    <Image src={Number(balanceof) >= 1 ? pic : nullPic} alt="" width={200} priority />
                   </div>
                 );
               })}
