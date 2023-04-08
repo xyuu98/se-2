@@ -15,16 +15,15 @@ contract SE2H is Ownable, ReentrancyGuard, ERC721 {
     ////////////////////////////////////////////
     bytes32 private s_freelistMerkleRoot;
     bytes32 private s_whitelistMerkleRoot;
-
-    uint256 public immutable i_maxSupply;
-    uint256 public immutable i_mintPrice;
-    string public baseURI;
-    string public notRevealedUri;
-    bool public revealed = false;
-    uint256 public tokenId;
-    uint256 public mintStartTime;
-    uint256 public mintEndTime;
-    bool public mintState;
+    uint256 private immutable i_maxSupply;
+    uint256 private immutable i_mintPrice;
+    string private baseURI;
+    string private notRevealedUri;
+    bool private revealed = false;
+    uint256 private tokenId;
+    uint256 private mintStartTime;
+    uint256 private mintEndTime;
+    bool private mintState;
 
     using Strings for uint256;
     using Counters for Counters.Counter;
@@ -40,7 +39,6 @@ contract SE2H is Ownable, ReentrancyGuard, ERC721 {
     error CallerIsNotUser();
     error SendWrongMintPrice();
     error TransferFaied();
-    error TooEarly();
     error WrongTimeSet();
     error MintNotStart();
     error InvalidAddress();
@@ -153,9 +151,7 @@ contract SE2H is Ownable, ReentrancyGuard, ERC721 {
         uint256 startTime,
         uint256 endTime
     ) external onlyOwner {
-        if (startTime <= block.timestamp) revert TooEarly();
-        if (endTime <= block.timestamp) revert TooEarly();
-        if (startTime >= endTime) revert WrongTimeSet();
+        if (startTime > endTime) revert WrongTimeSet();
         mintStartTime = startTime;
         mintEndTime = endTime;
     }
@@ -254,5 +250,42 @@ contract SE2H is Ownable, ReentrancyGuard, ERC721 {
     function withdraw() external onlyOwner nonReentrant {
         (bool success, ) = msg.sender.call{value: address(this).balance}("");
         if (!success) revert TransferFaied();
+    }
+
+    //getFunction
+    function getMaxSupply() public view returns (uint256) {
+        return i_maxSupply;
+    }
+
+    function getMintPrice() public view returns (uint256) {
+        return i_mintPrice;
+    }
+
+    function getBaseUri() public view returns (string memory) {
+        return baseURI;
+    }
+
+    function getNotrevealUri() public view returns (string memory) {
+        return notRevealedUri;
+    }
+
+    function getReveal() public view returns (bool) {
+        return revealed;
+    }
+
+    function getMintState() public view returns (bool) {
+        return mintState;
+    }
+
+    function getTokenId() public view returns (uint256) {
+        return tokenId;
+    }
+
+    function getMintStartTime() public view returns (uint256) {
+        return mintStartTime;
+    }
+
+    function getMintEndTime() public view returns (uint256) {
+        return mintEndTime;
     }
 }
