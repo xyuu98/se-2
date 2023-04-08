@@ -269,7 +269,9 @@ export const SquareUi = () => {
 
         {/* free white */}
         {/* 1 whitelist mint */}
-        <div className={`flex flex-col justify-around bg-base-200 bg-opacity-70 rounded-2xl shadow-lg px-5 py-4 }`}>
+        <div
+          className={`w-[300px] flex flex-col justify-around bg-base-200 bg-opacity-70 rounded-2xl shadow-lg px-5 py-4 }`}
+        >
           <div className="flex justify-between w-full">
             <div>
               <strong>Status:</strong>
@@ -290,7 +292,7 @@ export const SquareUi = () => {
 
         {/* 2  free mint */}
         <div
-          className={`mt-6 mb-6 flex flex-col justify-around bg-base-200 bg-opacity-70 rounded-2xl shadow-lg px-5 py-4 }`}
+          className={`w-[300px] mt-6 mb-6 flex flex-col justify-around bg-base-200 bg-opacity-70 rounded-2xl shadow-lg px-5 py-4 }`}
         >
           <div className="flex justify-between w-full">
             <div>
@@ -311,7 +313,9 @@ export const SquareUi = () => {
         </div>
 
         {/* 3  public mint */}
-        <div className={`flex flex-col justify-around bg-base-200 bg-opacity-70 rounded-2xl shadow-lg px-5 py-4 }`}>
+        <div
+          className={`w-[300px] flex flex-col justify-around bg-base-200 bg-opacity-70 rounded-2xl shadow-lg px-5 py-4 }`}
+        >
           <div className="flex justify-between w-full">
             <div>
               <strong>You can mint:</strong> &nbsp;

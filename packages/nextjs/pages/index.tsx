@@ -21,7 +21,7 @@ const Home: NextPage = () => {
       </Head>
 
       {/* changed */}
-      <div className="h-auto bg-base-300 flex flex-row max-w-7xl" style={{ margin: "auto" }}>
+      <div className="w-full bg-base-300 flex flex-row max-w-7xl" style={{ margin: "auto", minHeight: "100vh" }}>
         <div className="w-1/3 pl-5 mt-12">
           <div className="mt-3">
             <strong>Start time:</strong> <br />
