@@ -101,14 +101,14 @@ export const SquareUi = () => {
 
   const freeMint = async () => {
     const _now = new Date().getTime();
-    // if (_now > Number(endTime) * 1000) {
-    //   notification.warning(
-    //     <>
-    //       <p className="font-bold">The free mint has ended</p>
-    //     </>,
-    //   );
-    //   return;
-    // }
+    if (_now > Number(endTime) * 1000) {
+      notification.warning(
+        <>
+          <p className="font-bold">The free mint has ended</p>
+        </>,
+      );
+      return;
+    }
     if (_now < Number(startTime) * 1000) {
       notification.warning(
         <>
@@ -117,22 +117,30 @@ export const SquareUi = () => {
       );
       return;
     }
-    // if (freeIf) {
-    //   notification.warning(
-    //     <>
-    //       <p className="font-bold">Already mint it for free</p>
-    //     </>,
-    //   );
-    //   return;
-    // }
+    if (freeIf) {
+      notification.warning(
+        <>
+          <p className="font-bold">Already mint it for free</p>
+        </>,
+      );
+      return;
+    }
     const proof = getFreelistProof(address);
-    let _proofs: string[] = [];
-    proof.forEach(item => {
-      _proofs.push(ethers.utils.hexlify(item));
-    });
-    const params = [_proofs];
-    set_merkleProof(params);
-    _merkleProof && freelistMint();
+    if (proof) {
+      let _proofs: string[] = [];
+      proof.forEach(item => {
+        _proofs.push(ethers.utils.hexlify(item));
+      });
+      const params = [_proofs];
+      set_merkleProof(params);
+      _merkleProof && freelistMint();
+    } else {
+      notification.warning(
+        <>
+          <p className="font-bold">You are not on the list</p>
+        </>,
+      );
+    }
   };
 
   const whiteMint = () => {
@@ -163,13 +171,21 @@ export const SquareUi = () => {
     }
 
     const proof = getWhitelistProof(address);
-    let _proofs: string[] = [];
-    proof.forEach(item => {
-      _proofs.push(ethers.utils.hexlify(item));
-    });
-    const params = [_proofs];
-    set__args(params);
-    __args && whitelistMint();
+    if (proof) {
+      let _proofs: string[] = [];
+      proof.forEach(item => {
+        _proofs.push(ethers.utils.hexlify(item));
+      });
+      const params = [_proofs];
+      set__args(params);
+      __args && whitelistMint();
+    } else {
+      notification.warning(
+        <>
+          <p className="font-bold">You are not on the list</p>
+        </>,
+      );
+    }
   };
 
   const formatTime = () => {
@@ -177,41 +193,41 @@ export const SquareUi = () => {
     setNow(time);
   };
 
-  const showWhitelist = () => {
-    if (whiteif) {
-      setShow(true);
-    } else {
-      notification.warning(
-        <>
-          <p className="font-bold">No NFT there</p>
-        </>,
-      );
-    }
-  };
+  //   const showWhitelist = () => {
+  //     if (whiteif) {
+  //       setShow(true);
+  //     } else {
+  //       notification.warning(
+  //         <>
+  //           <p className="font-bold">No NFT there</p>
+  //         </>,
+  //       );
+  //     }
+  //   };
 
-  const showFreelist = () => {
-    if (freeIf) {
-      setShow(true);
-    } else {
-      notification.warning(
-        <>
-          <p className="font-bold">No NFT there</p>
-        </>,
-      );
-    }
-  };
+  //   const showFreelist = () => {
+  //     if (freeIf) {
+  //       setShow(true);
+  //     } else {
+  //       notification.warning(
+  //         <>
+  //           <p className="font-bold">No NFT there</p>
+  //         </>,
+  //       );
+  //     }
+  //   };
 
-  const showPubliclist = () => {
-    if (Number(balanceof) > 0) {
-      setShow(true);
-    } else {
-      notification.warning(
-        <>
-          <p className="font-bold">No NFT there</p>
-        </>,
-      );
-    }
-  };
+  //   const showPubliclist = () => {
+  //     if (Number(balanceof) > 0) {
+  //       setShow(true);
+  //     } else {
+  //       notification.warning(
+  //         <>
+  //           <p className="font-bold">No NFT there</p>
+  //         </>,
+  //       );
+  //     }
+  //   };
 
   useEffect(() => {
     const timeoutID = setInterval(() => {
@@ -268,9 +284,7 @@ export const SquareUi = () => {
               )}
             </div>
           </div>
-          <div className="btn btn-primary capitalize mt-10 mb-4" onClick={showWhitelist}>
-            Whitelist
-          </div>
+          <div className="btn btn-primary capitalize mt-10 mb-4">Whitelist</div>
           <div className="btn" onClick={whiteMint}>
             Mint
           </div>
@@ -292,9 +306,7 @@ export const SquareUi = () => {
               )}
             </div>
           </div>
-          <div className="btn btn-primary capitalize mt-10 mb-4" onClick={showFreelist}>
-            Freelist
-          </div>
+          <div className="btn btn-primary capitalize mt-10 mb-4">Freelist</div>
           <div className="btn" onClick={freeMint}>
             Mint
           </div>
@@ -308,9 +320,7 @@ export const SquareUi = () => {
               {5 - Number(balanceof)}
             </div>
           </div>
-          <div className="btn btn-primary capitalize mt-10 mb-4" onClick={showPubliclist}>
-            Publiclist
-          </div>
+          <div className="btn btn-primary capitalize mt-10 mb-4">Publiclist</div>
           <div className="btn" onClick={PublicMint}>
             Mint
           </div>

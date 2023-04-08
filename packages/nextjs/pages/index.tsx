@@ -36,7 +36,7 @@ const Home: NextPage = () => {
       {/* changed */}
       <div className="h-auto bg-base-300 flex flex-row max-w-7xl" style={{ margin: "auto" }}>
         <div className="w-1/3 pl-5 mt-12">
-          <div className="mt-3">
+          {/* <div className="mt-3">
             <strong>Total supply:</strong> <br />
             {Number(maxSupply)}
           </div>
@@ -47,7 +47,7 @@ const Home: NextPage = () => {
           <div className="mt-3">
             <strong>Status:</strong> <br />
             {mintState ? "true" : "false"}
-          </div>
+          </div> */}
           <div className="mt-3">
             <strong>Start time:</strong> <br />
             {dayjs(Number(startTime) * 1000).format("YYYY-MM-DD HH:mm")}

@@ -44,19 +44,32 @@ function getFreelistRootHash() {
 }
 
 function getWhitelistProof(wAddress) {
-    const wIndex = whitelistAddress.indexOf(wAddress)
-    const wClaimAddress = whiteListLeafNodes[wIndex]
-    const wHexProof = whiteListMerkleTree.getHexProof(wClaimAddress)
+    let result
+    try {
+        const wIndex = whitelistAddress.indexOf(wAddress)
+        const wClaimAddress = whiteListLeafNodes[wIndex]
+        const wHexProof = whiteListMerkleTree.getHexProof(wClaimAddress)
+        result = wHexProof
+    } catch (error) {
+        result = null
+    }
+
     //   console.log(`whiteList Proof for Address - leafNodes[${index}]\n`, hexProof);
-    return wHexProof
+    return result
 }
 
 function getFreelistProof(fAddress) {
-    const fIndex = freelistAddress.indexOf(fAddress)
-    const fClaimAddress = freeListLeafNodes[fIndex]
-    const fHexProof = freeListMerkleTree.getHexProof(fClaimAddress)
-    //   console.log(`freeList Proof for Address - leafNodes[${index}]\n`, hexProof);
-    return fHexProof
+    let result
+    try {
+        const fIndex = freelistAddress.indexOf(fAddress)
+        const fClaimAddress = freeListLeafNodes[fIndex]
+        const fHexProof = freeListMerkleTree.getHexProof(fClaimAddress)
+        //   console.log(`freeList Proof for Address - leafNodes[${index}]\n`, hexProof);
+        result = fHexProof
+    } catch (error) {
+        result = null
+    }
+    return result
 }
 
 console.log(`Whitelist Root: ${getWhitelistRootHash()}`)
