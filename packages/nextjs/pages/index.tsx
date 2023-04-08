@@ -73,7 +73,6 @@ const Home: NextPage = () => {
           <div className="mt-3">
             <strong>Now time:</strong> <br />
             {now} <br />
-            {nowStamp}
           </div>
           <div className="mt-3">
             <strong>Start time:</strong> <br />
