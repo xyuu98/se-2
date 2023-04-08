@@ -9,11 +9,9 @@ import dog from "./dog.jpg";
 import pic from "./pic.png";
 import dayjs from "dayjs";
 import type { NextPage } from "next";
-import { useAccount } from "wagmi";
 import { SquareUi } from "~~/components/example-ui/squareUi";
 
 const Home: NextPage = () => {
-  const { address } = useAccount();
   const [now, setNow] = useState("");
   const [nowStamp, setNowStamp] = useState(0);
 
@@ -56,7 +54,7 @@ const Home: NextPage = () => {
 
   const formatTime = () => {
     const time = new Date().getTime();
-    const _time = dayjs(time).format("YYYY-MM-DD HH-mm-ss");
+    const _time = dayjs(time * 1000).format("YYYY-MM-DD HH-mm-ss");
     setNow(_time);
     setNowStamp(time);
   };
@@ -81,7 +79,7 @@ const Home: NextPage = () => {
       </Head>
 
       {/* changed */}
-      <div className="h-screen bg-base-300 flex flex-row">
+      <div className="h-auto bg-base-300 flex flex-row">
         <div className="w-1/3 pl-5">
           <div className="mt-3">
             <strong>Total supply:</strong> <br />
@@ -103,15 +101,17 @@ const Home: NextPage = () => {
           </div>
           <div className="mt-3">
             <strong>Start time:</strong> <br />
-            {dayjs(Number(startTime)).format("YYYY-MM-DD HH:mm")}
+            {dayjs(Number(startTime) * 1000).format("YYYY-MM-DD HH:mm")}
           </div>
           <div className="mt-3">
             <strong> End time: </strong> <br />
-            {dayjs(Number(endTime)).format("YYYY-MM-DD HH:mm")}
+            {dayjs(Number(endTime) * 1000).format("YYYY-MM-DD HH:mm")}
           </div>
         </div>
         <div className="grow pr-4">
-          <SquareUi />
+          <div className="w-2/3">
+            <SquareUi />
+          </div>
         </div>
       </div>
     </>
