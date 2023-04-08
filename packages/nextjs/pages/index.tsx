@@ -13,18 +13,6 @@ const Home: NextPage = () => {
     contractName: "SE2H",
     functionName: "getMintEndTime",
   });
-  const { data: mintState } = useScaffoldContractRead({
-    contractName: "SE2H",
-    functionName: "getMintState",
-  });
-  const { data: tokenId } = useScaffoldContractRead({
-    contractName: "SE2H",
-    functionName: "getTokenId",
-  });
-  const { data: maxSupply } = useScaffoldContractRead({
-    contractName: "SE2H",
-    functionName: "getMaxSupply",
-  });
 
   return (
     <>

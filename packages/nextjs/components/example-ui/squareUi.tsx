@@ -1,10 +1,8 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import { getFreelistProof, getWhitelistProof } from "../../../hardhat/scripts/getRoot";
-import nullPic from "../../pages/null.jpg";
 import pic from "../../pages/pic.png";
 import { notification } from "../../utils/scaffold-eth/notification";
-import dayjs from "dayjs";
 import { ethers } from "ethers";
 import { useAccount } from "wagmi";
 import { useScaffoldContractRead, useScaffoldContractWrite } from "~~/hooks/scaffold-eth";
@@ -127,7 +125,7 @@ export const SquareUi = () => {
     }
     const proof = getFreelistProof(address);
     if (proof) {
-      let _proofs: string[] = [];
+      const _proofs: string[] = [];
       proof.forEach(item => {
         _proofs.push(ethers.utils.hexlify(item));
       });
@@ -172,7 +170,7 @@ export const SquareUi = () => {
 
     const proof = getWhitelistProof(address);
     if (proof) {
-      let _proofs: string[] = [];
+      const _proofs: string[] = [];
       proof.forEach(item => {
         _proofs.push(ethers.utils.hexlify(item));
       });
