@@ -26,6 +26,9 @@ export const SquareUi = () => {
     contractName: "SE2H",
     functionName: "publicMint",
     value: "0.1",
+    onSuccess: () => {
+      setShow(true);
+    },
   });
   const { data: freeIf } = useScaffoldContractRead({
     contractName: "SE2H",
@@ -52,6 +55,9 @@ export const SquareUi = () => {
     contractName: "SE2H",
     functionName: "freelistMint",
     args: _merkleProof,
+    onSuccess: () => {
+      setShow(true);
+    },
   });
 
   const { data: whiteif } = useScaffoldContractRead({
@@ -66,6 +72,9 @@ export const SquareUi = () => {
     functionName: "whitelistMint",
     args: __args,
     value: "0.05",
+    onSuccess: () => {
+      setShow(true);
+    },
   });
 
   const PublicMint = () => {
@@ -90,16 +99,16 @@ export const SquareUi = () => {
     writePublic();
   };
 
-  const freeMint = () => {
+  const freeMint = async () => {
     const _now = new Date().getTime();
-    if (_now > Number(endTime) * 1000) {
-      notification.warning(
-        <>
-          <p className="font-bold">The free mint has ended</p>
-        </>,
-      );
-      return;
-    }
+    // if (_now > Number(endTime) * 1000) {
+    //   notification.warning(
+    //     <>
+    //       <p className="font-bold">The free mint has ended</p>
+    //     </>,
+    //   );
+    //   return;
+    // }
     if (_now < Number(startTime) * 1000) {
       notification.warning(
         <>
@@ -108,14 +117,14 @@ export const SquareUi = () => {
       );
       return;
     }
-    if (freeIf) {
-      notification.warning(
-        <>
-          <p className="font-bold">Already mint it for free</p>
-        </>,
-      );
-      return;
-    }
+    // if (freeIf) {
+    //   notification.warning(
+    //     <>
+    //       <p className="font-bold">Already mint it for free</p>
+    //     </>,
+    //   );
+    //   return;
+    // }
     const proof = getFreelistProof(address);
     let _proofs: string[] = [];
     proof.forEach(item => {
@@ -139,7 +148,7 @@ export const SquareUi = () => {
     if (_now < Number(startTime) * 1000) {
       notification.warning(
         <>
-          <p className="font-bold">The free mint has not started yet</p>
+          <p className="font-bold">The whitelist mint has not started yet</p>
         </>,
       );
       return;
@@ -259,7 +268,7 @@ export const SquareUi = () => {
               )}
             </div>
           </div>
-          <div className="btn capitalize mt-10 mb-4" onClick={showWhitelist}>
+          <div className="btn btn-primary capitalize mt-10 mb-4" onClick={showWhitelist}>
             Whitelist
           </div>
           <div className="btn" onClick={whiteMint}>
@@ -283,7 +292,7 @@ export const SquareUi = () => {
               )}
             </div>
           </div>
-          <div className="btn capitalize mt-10 mb-4" onClick={showFreelist}>
+          <div className="btn btn-primary capitalize mt-10 mb-4" onClick={showFreelist}>
             Freelist
           </div>
           <div className="btn" onClick={freeMint}>
@@ -299,7 +308,7 @@ export const SquareUi = () => {
               {5 - Number(balanceof)}
             </div>
           </div>
-          <div className="btn capitalize mt-10 mb-4" onClick={showPubliclist}>
+          <div className="btn btn-primary capitalize mt-10 mb-4" onClick={showPubliclist}>
             Publiclist
           </div>
           <div className="btn" onClick={PublicMint}>
