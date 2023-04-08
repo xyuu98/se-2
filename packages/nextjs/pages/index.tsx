@@ -32,7 +32,7 @@ const Home: NextPage = () => {
 
   const formatTime = () => {
     const time = new Date().getTime();
-    const _time = dayjs(time * 1000).format("YYYY-MM-DD HH-mm-ss");
+    const _time = dayjs(time).format("YYYY-MM-DD HH-mm-ss");
     setNow(_time);
     setNowStamp(time);
   };
