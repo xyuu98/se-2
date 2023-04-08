@@ -1,6 +1,6 @@
 import { HardhatRuntimeEnvironment } from "hardhat/types"
 import { DeployFunction } from "hardhat-deploy/types"
-import { time } from "@nomicfoundation/hardhat-network-helpers"
+// import { time } from "@nomicfoundation/hardhat-network-helpers"
 
 /**
  * Deploys a contract named "SE2H" using the deployer account and
@@ -27,19 +27,23 @@ const deploySE2H: DeployFunction = async function (
     await deploy("SE2H", {
         from: deployer,
         // Contract constructor arguments
-        args: ["2222", "100000000000000000"],
+        args: ["20", "100000000000000000"],
         log: true,
         // autoMine: can be passed to the deploy function to make the deployment process faster on local networks by
         // automatically mining the contract deployment transaction. There is no effect on live networks.
         autoMine: true,
+        waitConfirmations: 1,
     })
 
     // Get the deployed contract
     const SE2H = await hre.ethers.getContract("SE2H", deployer)
     //Set uri
     await SE2H.setNotRevealedURI(
-        "ipfs://QmRUAsEcEJZRYn8pjmyAgsDU5EYu2eAofYdX3qC9fo8yGd"
+        "ipfs://QmRUAsEcEJZRYn8pjmyAgsDU5EYu2eAofYdX3qC9fo8yGd/"
     )
+    // await SE2H.setBaseURI(
+    //     "ipfs://QmQpPgQaxhcaLsrAWiqTLNzBpXsfeGx9xdM2o8ZAG5xHyW/"
+    // )
     await SE2H.setFreelistMerkleRoot(
         "0x8527c842a3751c5a160fea7402d1ee111e8b615882f52cfe2235093f30d4d8d2"
     )
