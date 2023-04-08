@@ -13,19 +13,6 @@ const Home: NextPage = () => {
     contractName: "SE2H",
     functionName: "getMintEndTime",
   });
-  const { data: mintState } = useScaffoldContractRead({
-    contractName: "SE2H",
-    functionName: "getMintState",
-  });
-  const { data: tokenId } = useScaffoldContractRead({
-    contractName: "SE2H",
-    functionName: "getTokenId",
-  });
-  const { data: maxSupply } = useScaffoldContractRead({
-    contractName: "SE2H",
-    functionName: "getMaxSupply",
-  });
-
   return (
     <>
       <Head>
@@ -36,18 +23,6 @@ const Home: NextPage = () => {
       {/* changed */}
       <div className="h-auto bg-base-300 flex flex-row max-w-7xl" style={{ margin: "auto" }}>
         <div className="w-1/3 pl-5 mt-12">
-          {/* <div className="mt-3">
-            <strong>Total supply:</strong> <br />
-            {Number(maxSupply)}
-          </div>
-          <div className="mt-3">
-            <strong> Already mint:</strong> <br />
-            {Number(tokenId)}
-          </div>
-          <div className="mt-3">
-            <strong>Status:</strong> <br />
-            {mintState ? "true" : "false"}
-          </div> */}
           <div className="mt-3">
             <strong>Start time:</strong> <br />
             {dayjs(Number(startTime) * 1000).format("YYYY-MM-DD HH:mm")}
