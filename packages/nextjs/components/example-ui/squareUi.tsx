@@ -51,6 +51,19 @@ export const SquareUi = () => {
     args: _args,
   });
 
+  const { data: whiteif } = useScaffoldContractRead({
+    contractName: "SE2H",
+    functionName: "whitelistClaimed",
+    args: [address],
+  });
+
+  const [__args, set__args] = useState<any>();
+  const { writeAsync: whitelistMint } = useScaffoldContractWrite({
+    contractName: "SE2H",
+    functionName: "whitelistMint",
+    args: __args,
+  });
+
   const PublicMint = () => {
     const _now = new Date().getTime();
     if (Number(endTime) * 1000 > _now) {
@@ -101,21 +114,9 @@ export const SquareUi = () => {
     }
     const proof = getFreelistProof(address);
     set_args(proof);
+    console.log("free", _args);
     _args && freelistMint();
   };
-
-  const { data: whiteif } = useScaffoldContractRead({
-    contractName: "SE2H",
-    functionName: "whitelistClaimed",
-    args: [address],
-  });
-
-  const [__args, set__args] = useState<any>();
-  const { writeAsync: whitelistMint } = useScaffoldContractWrite({
-    contractName: "SE2H",
-    functionName: "whitelistMint",
-    args: __args,
-  });
 
   const whiteMint = () => {
     const _now = new Date().getTime();
@@ -145,6 +146,7 @@ export const SquareUi = () => {
     }
     const proof = getWhitelistProof(address);
     set__args(proof);
+    console.log("white", __args);
     __args && whitelistMint();
   };
 
