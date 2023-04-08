@@ -45,11 +45,11 @@ export const SquareUi = () => {
     functionName: "getMintStartTime",
   });
 
-  const [_args, set_args] = useState<any>();
+  const [_merkleProof, set_merkleProof] = useState<any>();
   const { writeAsync: freelistMint } = useScaffoldContractWrite({
     contractName: "SE2H",
     functionName: "freelistMint",
-    args: _args,
+    args: _merkleProof,
   });
 
   const { data: whiteif } = useScaffoldContractRead({
@@ -63,6 +63,7 @@ export const SquareUi = () => {
     contractName: "SE2H",
     functionName: "whitelistMint",
     args: __args,
+    value: "0.05",
   });
 
   const PublicMint = () => {
@@ -114,10 +115,13 @@ export const SquareUi = () => {
       return;
     }
     const proof = getFreelistProof(address);
-    const params = [`${proof[0]}`, `${proof[1]}`, `${proof[2]}`];
-    console.log(params);
-    set_args(params);
-    _args && freelistMint();
+    let _proofs: string[] = [];
+    proof.forEach(item => {
+      _proofs.push(ethers.utils.hexlify(item));
+    });
+    const params = [_proofs];
+    set_merkleProof(params);
+    _merkleProof && freelistMint();
   };
 
   const whiteMint = () => {
@@ -146,9 +150,14 @@ export const SquareUi = () => {
       );
       return;
     }
+
     const proof = getWhitelistProof(address);
-    set__args(proof);
-    console.log("white", __args);
+    let _proofs: string[] = [];
+    proof.forEach(item => {
+      _proofs.push(ethers.utils.hexlify(item));
+    });
+    const params = [_proofs];
+    set__args(params);
     __args && whitelistMint();
   };
 
@@ -173,7 +182,7 @@ export const SquareUi = () => {
               <button className="" onClick={() => {}}>
                 <div>
                   <strong>Status:</strong>
-                  {whiteif ? "Already mint" : "Not mint"}
+                  {String(whiteif)}
                 </div>
               </button>
             </div>
@@ -200,7 +209,7 @@ export const SquareUi = () => {
               <button className="" onClick={() => {}}>
                 <div>
                   <strong>Status:</strong>
-                  {freeIf ? "Already mint" : "Not mint"}
+                  {String(freeIf)}
                 </div>
               </button>
             </div>
@@ -210,7 +219,7 @@ export const SquareUi = () => {
                 {new Array(1).fill("").map((_, i) => {
                   return (
                     <div className="flex justify-center" key={i}>
-                      <Image src={freeIf ? pic : nullPic} alt="" width={200} priority />
+                      <Image src={freeIf ? pic : nullPic} alt="" width={200} />
                     </div>
                   );
                 })}
