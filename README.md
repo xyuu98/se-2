@@ -13,5 +13,5 @@ We built a simple NFT Mint App using SE2H, which includes:
 Due to our lack of time and insufficient preparation, the content display and function realization are not perfect, please forgive me, we will continue to improve and continue to build!
 
 - ✅ **Contract Address Goerli**: 0x08F331eA0A1D87E74c7A7cdB9974f2D3B3f6F8D9
-- 🔥 **Live URL**: https://nextjs-xiaobinniu.vercel.app/
+- 🔥 **Live URL**: https://se-2-mint.vercel.app/
 - 🔐 **Vedio URL**: https://youtu.be/Md7ylUq_-es
