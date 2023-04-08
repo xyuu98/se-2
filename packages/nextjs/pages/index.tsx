@@ -1,4 +1,3 @@
-import { useEffect, useState } from "react";
 import Head from "next/head";
 import { useScaffoldContractRead } from "../hooks/scaffold-eth/useScaffoldContractRead";
 import dayjs from "dayjs";
@@ -6,9 +5,6 @@ import type { NextPage } from "next";
 import { SquareUi } from "~~/components/example-ui/squareUi";
 
 const Home: NextPage = () => {
-  const [now, setNow] = useState("");
-  const [nowStamp, setNowStamp] = useState(0);
-
   const { data: startTime } = useScaffoldContractRead({
     contractName: "SE2H",
     functionName: "getMintStartTime",
@@ -30,23 +26,6 @@ const Home: NextPage = () => {
     functionName: "getMaxSupply",
   });
 
-  const formatTime = () => {
-    const time = new Date().getTime();
-    const _time = dayjs(time).format("YYYY-MM-DD HH-mm-ss");
-    setNow(_time);
-    setNowStamp(time);
-  };
-
-  useEffect(() => {
-    const timeoutID = setInterval(() => {
-      formatTime();
-    }, 1000);
-
-    return () => {
-      clearTimeout(timeoutID);
-    };
-  }, []);
-
   return (
     <>
       <Head>
@@ -55,8 +34,8 @@ const Home: NextPage = () => {
       </Head>
 
       {/* changed */}
-      <div className="h-auto bg-base-300 flex flex-row">
-        <div className="w-1/3 pl-5">
+      <div className="h-auto bg-base-300 flex flex-row max-w-7xl" style={{ margin: "auto" }}>
+        <div className="w-1/3 pl-5 mt-12">
           <div className="mt-3">
             <strong>Total supply:</strong> <br />
             {Number(maxSupply)}
@@ -68,11 +47,6 @@ const Home: NextPage = () => {
           <div className="mt-3">
             <strong>Status:</strong> <br />
             {mintState ? "true" : "false"}
-          </div>
-
-          <div className="mt-3">
-            <strong>Now time:</strong> <br />
-            {now} <br />
           </div>
           <div className="mt-3">
             <strong>Start time:</strong> <br />

@@ -4,13 +4,15 @@ import { getFreelistProof, getWhitelistProof } from "../../../hardhat/scripts/ge
 import nullPic from "../../pages/null.jpg";
 import pic from "../../pages/pic.png";
 import { notification } from "../../utils/scaffold-eth/notification";
+import dayjs from "dayjs";
 import { ethers } from "ethers";
 import { useAccount } from "wagmi";
 import { useScaffoldContractRead, useScaffoldContractWrite } from "~~/hooks/scaffold-eth";
 
 export const SquareUi = () => {
-  const containerRef = useRef<HTMLDivElement>(null);
+  const [now, setNow] = useState(0);
   const { address } = useAccount();
+  const [show, setShow] = useState(false);
 
   const { data: totalCounter } = useScaffoldContractRead({
     contractName: "SE2H",
@@ -161,7 +163,56 @@ export const SquareUi = () => {
     __args && whitelistMint();
   };
 
-  useEffect(() => {}, []);
+  const formatTime = () => {
+    const time = new Date().getTime();
+    setNow(time);
+  };
+
+  const showWhitelist = () => {
+    if (whiteif) {
+      setShow(true);
+    } else {
+      notification.warning(
+        <>
+          <p className="font-bold">No NFT there</p>
+        </>,
+      );
+    }
+  };
+
+  const showFreelist = () => {
+    if (freeIf) {
+      setShow(true);
+    } else {
+      notification.warning(
+        <>
+          <p className="font-bold">No NFT there</p>
+        </>,
+      );
+    }
+  };
+
+  const showPubliclist = () => {
+    if (Number(balanceof) > 0) {
+      setShow(true);
+    } else {
+      notification.warning(
+        <>
+          <p className="font-bold">No NFT there</p>
+        </>,
+      );
+    }
+  };
+
+  useEffect(() => {
+    const timeoutID = setInterval(() => {
+      formatTime();
+    }, 1000);
+
+    return () => {
+      clearTimeout(timeoutID);
+    };
+  }, []);
 
   return (
     <div className="">
@@ -173,91 +224,87 @@ export const SquareUi = () => {
         </div>
       </div>
       {/* mint */}
-      <div className="py-2 flex flex-wrap justify-center bg-[url('/assets/gradient-bg.png')] bg-[length:100%_100%] sm:px-0 lg:py-auto">
-        {/* free white */}
-        <div className="flex justify-around">
-          {/* 1 whitelist mint */}
-          <div className={`mr-8 flex flex-col bg-base-200 bg-opacity-70 rounded-2xl shadow-lg px-5 py-4 }`}>
-            <div className="flex justify-between w-full">
-              <button className="" onClick={() => {}}>
-                <div>
-                  <strong>Status:</strong>
-                  {String(whiteif)}
-                </div>
-              </button>
-            </div>
-            <div className="mt-3 border border-primary bg-neutral rounded-3xl text-secondary  overflow-hidden text-[116px] whitespace-nowrap w-full uppercase tracking-tighter font-bai-jamjuree leading-tight">
-              <div className="relative overflow-x-hidden" ref={containerRef}>
-                {/* for speed calculating purposes */}
-                {new Array(1).fill("").map((_, i) => {
-                  return (
-                    <div className="flex justify-center" key={i}>
-                      <Image src={whiteif ? pic : nullPic} alt="" width={200} priority />
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-            <button className="btn" onClick={whiteMint}>
-              White Mint
-            </button>
-          </div>
+      <div className="py-2 flex flex-wrap justify-center bg-[url('/assets/gradient-bg.png')] bg-[length:100%_100%] relative">
+        {!show ? null : (
+          <div
+            className="absolute w-[250px] h-[300px] z-20 rounded-md bg-indigo-300 flex flex-col justify-center"
+            style={{ top: "10%" }}
+          >
+            <Image src={pic} width={200} height={200} alt="" className="rounded-md" style={{ margin: "10px auto" }} />
 
-          {/* 2  free mint */}
-          <div className={`flex flex-col bg-base-200 bg-opacity-70 rounded-2xl shadow-lg px-5 py-4  }`}>
-            <div className="flex justify-between w-full">
-              <button className="" onClick={() => {}}>
-                <div>
-                  <strong>Status:</strong>
-                  {String(freeIf)}
-                </div>
-              </button>
+            <div
+              className="btn"
+              style={{ margin: "auto" }}
+              onClick={() => {
+                setShow(false);
+              }}
+            >
+              close
             </div>
-            <div className="mt-3 border border-primary bg-neutral rounded-3xl text-secondary  overflow-hidden text-[116px] whitespace-nowrap w-full uppercase tracking-tighter font-bai-jamjuree leading-tight">
-              <div className="relative overflow-x-hidden" ref={containerRef}>
-                {/* for speed calculating purposes */}
-                {new Array(1).fill("").map((_, i) => {
-                  return (
-                    <div className="flex justify-center" key={i}>
-                      <Image src={freeIf ? pic : nullPic} alt="" width={200} />
-                    </div>
-                  );
-                })}
-              </div>
+          </div>
+        )}
+
+        {/* free white */}
+        {/* 1 whitelist mint */}
+        <div className={`flex flex-col justify-around bg-base-200 bg-opacity-70 rounded-2xl shadow-lg px-5 py-4 }`}>
+          <div className="flex justify-between w-full">
+            <div>
+              <strong>Status:</strong>
+              {now < Number(startTime) * 1000 ? (
+                <span style={{}}>Not started</span>
+              ) : now > Number(endTime) * 1000 ? (
+                <span style={{ color: "red" }}>Close</span>
+              ) : (
+                <span style={{ color: "green" }}>Opening</span>
+              )}
             </div>
-            <button className="btn" onClick={freeMint}>
-              Free Mint
-            </button>
+          </div>
+          <div className="btn capitalize mt-10 mb-4" onClick={showWhitelist}>
+            Whitelist
+          </div>
+          <div className="btn" onClick={whiteMint}>
+            Mint
           </div>
         </div>
 
-        {/*   public mint */}
+        {/* 2  free mint */}
         <div
-          className={`mt-2 flex flex-col max-w-md bg-base-200 bg-opacity-70 rounded-2xl shadow-lg px-5 py-4 w-full }`}
+          className={`mt-6 mb-6 flex flex-col justify-around bg-base-200 bg-opacity-70 rounded-2xl shadow-lg px-5 py-4 }`}
         >
           <div className="flex justify-between w-full">
-            <button className="" onClick={() => {}}>
-              <div>
-                <strong>Can mint:</strong>
-                {5 - Number(balanceof)}
-              </div>
-            </button>
-          </div>
-          <div className="mt-3 border border-primary bg-neutral rounded-3xl text-secondary  overflow-hidden text-[116px] whitespace-nowrap w-full uppercase tracking-tighter font-bai-jamjuree leading-tight">
-            <div className="relative overflow-x-hidden" ref={containerRef}>
-              {/* for speed calculating purposes */}
-              {new Array(1).fill("").map((_, i) => {
-                return (
-                  <div className="flex justify-center" key={i}>
-                    <Image src={Number(balanceof) >= 1 ? pic : nullPic} alt="" width={200} priority />
-                  </div>
-                );
-              })}
+            <div>
+              <strong>Status:</strong>
+              {now < Number(startTime) * 1000 ? (
+                <span style={{}}>Not started</span>
+              ) : now > Number(endTime) * 1000 ? (
+                <span style={{ color: "red" }}>Close</span>
+              ) : (
+                <span style={{ color: "green" }}>Opening</span>
+              )}
             </div>
           </div>
-          <button className="btn" onClick={PublicMint}>
-            Public Mint
-          </button>
+          <div className="btn capitalize mt-10 mb-4" onClick={showFreelist}>
+            Freelist
+          </div>
+          <div className="btn" onClick={freeMint}>
+            Mint
+          </div>
+        </div>
+
+        {/* 3  public mint */}
+        <div className={`flex flex-col justify-around bg-base-200 bg-opacity-70 rounded-2xl shadow-lg px-5 py-4 }`}>
+          <div className="flex justify-between w-full">
+            <div>
+              <strong>You can mint:</strong> &nbsp;
+              {5 - Number(balanceof)}
+            </div>
+          </div>
+          <div className="btn capitalize mt-10 mb-4" onClick={showPubliclist}>
+            Publiclist
+          </div>
+          <div className="btn" onClick={PublicMint}>
+            Mint
+          </div>
         </div>
       </div>
     </div>
